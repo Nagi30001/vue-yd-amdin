@@ -1,0 +1,1 @@
+vue-yd-amdin

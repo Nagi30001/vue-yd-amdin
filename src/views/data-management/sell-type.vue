@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <el-tabs type="border-card" style="margin-top: 30px;margin: 30px;">
+    <el-tabs type="border-card" style="margin: 10px;">
     <el-tab-pane label="销售类型">
       <el-button type="primary" size="small" plain style="margin: 5px;" icon="el-icon-circle-plus"
       @click="centerDialogVisible = true"

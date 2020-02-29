@@ -6,31 +6,37 @@
     :data="users.filter(data => !search || data.userName.toLowerCase().includes(search.toLowerCase()))"
     style="width: 100%">
     <el-table-column
+      align="center"
       width="80px"
       label="工号"
       prop="jobNum">
     </el-table-column>
     <el-table-column
+      align="center"
       width="80px"
       label="用户名"
       prop="userName">
     </el-table-column>
     <el-table-column
-      width="100px"
+      align="center"
+      width="150px"
       label="电话"
       prop="phone">
     </el-table-column>
     <el-table-column
+      align="center"
       width="100px"
       label="省份"
       prop="province">
     </el-table-column>
     <el-table-column
+      align="center"
       width="100px"
       label="城市"
       prop="city">
     </el-table-column>
     <el-table-column
+      align="center"
       width="100px"
       label="角色"
       >
@@ -39,11 +45,13 @@
       </template>
     </el-table-column>
     <el-table-column
+      align="center"
       width="100px"
       label="创建人"
       prop="user.userName">
     </el-table-column>
     <el-table-column
+      align="center"
       width="100px"
       label="状态"
       prop="status">
@@ -53,16 +61,18 @@
       </template>
     </el-table-column>
     <el-table-column
+      align="center"
       width="100px"
       label="创建时间"
       prop="createTime">
     </el-table-column>
     <el-table-column
+      align="center"
       label="地址"
       prop="address">
     </el-table-column>
     <el-table-column
-       width="200px"
+      width="200px"
       align="right">
       <template slot="header" slot-scope="scope">
         <el-input
@@ -83,19 +93,16 @@
   </el-table>
 
   <!-- 新增用户/修改用户-对话框 -->
-  <el-dialog title="收货地址" :visible.sync="dialogFormVisible" @closed="handleClose" >
+  <el-dialog :title="checkPattern ? '修改信息' : '新增用户' " :visible.sync="dialogFormVisible" @closed="handleClose" width="400px">
     <el-form ref="dataFormJobNum" status-icon :model="userMsg" style="width: 1600px;" :rules="rules"  >
       <el-form-item label="工号:" :label-width="formLabelWidth" prop="jobNum" v-show="!checkPattern" ref="jobNum">
         <el-input v-model="userMsg.jobNum" autocomplete="off" style="width: 200px;"  ></el-input>
       </el-form-item>
     </el-form>
     <el-form ref="dataForm" status-icon :model="userMsg" style="width: 1600px;" :rules="rules"  >
-
       <el-form-item label="工号:" :label-width="formLabelWidth"  v-show="checkPattern" >
         <el-input v-model="userMsg.jobNum" autocomplete="off" style="width: 200px;" disabled></el-input>
       </el-form-item>
-
-
       <el-form-item label="密码:" :label-width="formLabelWidth" prop="jobPassword">
         <el-input v-model="userMsg.jobPassword" autocomplete="off" style="width: 200px;"></el-input>
       </el-form-item>

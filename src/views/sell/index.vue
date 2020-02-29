@@ -1,27 +1,33 @@
 <template>
-  <el-tabs type="border-card" style="margin: 10px;">
+  <el-tabs type="border-card" style="margin: 10px;" class="wrap"
+  infinite-scroll-disabled="busy"
+  v-infinite-scroll="load"
+  infinite-scroll-immediate-check=false
+  infinite-scroll-throttle-delay=100000>
     <el-tab-pane label="报单大厅">
   <div >
    <div >
       <!-- 查询按钮 -->
-      <el-button  class="filter-item" type="primary" plain icon="el-icon-zoom-in"  size="small" @click="searchDialog = true" >
+      <el-button  class="filter-item" type="primary" plain icon="el-icon-zoom-in" style="margin: 5px;" size="small" @click="searchDialog = true" >
         条件查询
       </el-button>
       <!-- 添加按钮 -->
-      <el-button class="filter-item"  type="primary" plain icon="el-icon-plus" size="small" @click="handleCreate"  >
+      <el-button class="filter-item"  type="primary" plain icon="el-icon-plus" style="margin: 5px;" size="small" @click="handleCreate"  >
         新增单据
       </el-button>
-<!--      <el-button class="filter-item" style="margin-left: 0px;width: 165px;margin-left: 10px;" type="primary" icon="el-icon-edit" >
-        更多条件
-      </el-button> --> 
+      <!-- 页面刷新 -->
+      <el-button class="filter-item"  type="primary" plain icon="el-icon-refresh-right" style="margin: 5px;" size="small" @click="pageRefresh()">
+        页面刷新
+      </el-button>
     </div>
     <!-- 表格信息 -->
     <el-table
       v-loading="loading"
       size="mini"
       :data="receipts"
-      style="width: 100%;">
-      <el-table-column type="expand">
+      style="width: 100%;"
+      >
+      <el-table-column type="expand" >
         <template slot-scope="props"   >
           <el-form label-position="left" inline class="demo-table-expand">
             <el-form-item label="销售工号:">
@@ -72,26 +78,32 @@
             <el-form-item label="收款方:">
               <span>{{ props.row.gatheringType }}</span>
             </el-form-item>
+            <el-form-item label="收款图片:">
+              <div class="demo-image__preview" v-for="item in props.row.imageUrls" :key="item.id" >
+                <el-image
+                  style="width: 100px; height: 100px"
+                  :src="item"
+                  :preview-src-list="props.row.imageUrls">
+                </el-image>
+              </div>
+            </el-form-item>
           </el-form>
         </template>
       </el-table-column>
      <el-table-column
         v-if="ifScreenWidth(screenWidth,1000)"
-        header-align="center"
         align="center"
         min-width="70px"
         label="销售工号"
         prop="user.jobNum">
       </el-table-column>
      <el-table-column
-        header-align="center"
         align="center"
-        min-width="70px"
+        min-width="60px"
         label="创建人"
         prop="user.userName">
       </el-table-column>
      <el-table-column
-        header-align="center"
         align="center"
         label="状态">
         <template slot-scope="scope">
@@ -117,68 +129,60 @@
         </template>
        </el-table-column>
      <el-table-column
-        header-align="center"
         align="center"
         label="客户姓名"
         prop="clientName">
       </el-table-column>
       <el-table-column
         v-if="ifScreenWidth(screenWidth,1000)"
-        header-align="center"
         align="center"
         label="省份"
         prop="province">
       </el-table-column>
       <el-table-column
         v-if="ifScreenWidth(screenWidth,1000)"
-        header-align="center"
         align="center"
         label="城市"
         prop="city">
       </el-table-column>
       <el-table-column
         v-if="ifScreenWidth(screenWidth,800)"
-        header-align="center"
+        width="120px"
         align="center"
         label="客户电话"
         prop="clientPhone">
       </el-table-column>
       <el-table-column
-        header-align="center"
+        width="90px"
         align="center"
         label="客户车牌"
         prop="clientCarNum">
       </el-table-column>
       <el-table-column
-        v-if="ifScreenWidth(screenWidth,1100)"
-        header-align="center"
+        v-if="ifScreenWidth(screenWidth,1800)"
         align="center"
         label="客户车型"
         prop="carBrand">
       </el-table-column>
       <el-table-column
         v-if="ifScreenWidth(screenWidth,800)"
-        header-align="center"
         align="center"
         label="安装平台"
         prop="tpUser.userName">
       </el-table-column>
       <el-table-column
         v-if="ifScreenWidth(screenWidth,1200)"
-        header-align="center"
         align="center"
         label="数量"
         prop="count">
       </el-table-column>
       <el-table-column
         v-if="ifScreenWidth(screenWidth,800)"
-        header-align="center"
         align="center"
         label="销售类型"
         prop="sellTypeName">
       </el-table-column>
       <el-table-column
-        header-align="center"
         v-if="ifScreenWidth(screenWidth,800)"
         style="font-size: 5px;"
         align="center"
@@ -187,28 +191,24 @@
       </el-table-column>
       <el-table-column
         v-if="ifScreenWidth(screenWidth,1300)"
-        header-align="center"
         align="center"
         label="渠道"
         prop="sellTypeName">
       </el-table-column>
       <el-table-column
         v-if="ifScreenWidth(screenWidth,1400)"
-        header-align="center"
         align="center"
         label="应付金额"
         prop="money">
       </el-table-column>
       <el-table-column
         v-if="ifScreenWidth(screenWidth,1500)"
-        header-align="center"
         align="center"
         label="应付押金"
         prop="cashPledge">
       </el-table-column>
       <el-table-column
         v-if="ifScreenWidth(screenWidth,1600)"
-        header-align="center"
         align="center"
         label="收款方"
         prop="gatheringType">
@@ -216,7 +216,7 @@
     </el-table>
     <div >
       <!-- 新增单据 对话框, textMap[信息类型]  dialogFormVisible 对话框可见不可见  -->
-      <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :width="DialogWidth">
+      <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="400px">
         <!-- 对话框内部信息 -->
         <el-form ref="dataForm" status-icon :rules="rules" :model="temp" label-position="left" label-width="100px" :width="DialogWidth">
           <!-- 每行信息 -->
@@ -233,13 +233,14 @@
           </el-form-item>
 
           </el-form-item>
-          <el-form-item label="归属地:" prop="city"   >
+          <el-form-item label="归属地:" prop="city"  >
             <!-- 选择城市-一个城市默认 -->
             <div >
             <el-cascader
                 v-model="temp.city"
                 :options="options"
                 style="width: 194px;"
+                @change="clearTP()"
                 ></el-cascader></div>
           </el-form-item>
           <el-form-item label="收款方:"  prop="gatheringType" >
@@ -288,9 +289,9 @@
             <el-select v-model="temp.additionType" multiple placeholder="请选择附加业务">
                 <el-option
                   v-for="item in additionType"
-                  :key="item.id"
+                  :key="item.additionName"
                   :label="item.additionName"
-                  :value="item.id">
+                  :value="item.additionName">
                 </el-option>
               </el-select>
           </el-form-item>
@@ -328,24 +329,45 @@
     <el-dialog
       title="条件查询"
       :visible.sync="searchDialog"
-      width="90%">
+      width="400px"
+      >
       <!-- 标题文本查询 -->
-      <label style="width: 80px;">销售名称:</label>
-      <el-input  placeholder="销售名称" v-model="queryDate.sellName" style="width: 200px; margin: 5px;" class="filter-item"   />
+      <label style="width: 80px;">销售人:</label>
+      <el-input  placeholder="销售人员姓名" v-model="queryDate.sellName" style="width: 200px; margin: 5px;" class="filter-item"   />
       <label style="width: 80px;">平台名称:</label>
       <el-select v-model="queryDate.TPId" placeholder="默认全部平台" style="width: 200px;margin: 5px;">
         <el-option v-for="item in thirdPartyMsgAll" :key="item.id" :label="item.userName" :value="item.id" ></el-option>
+      </el-select>
+      <label style="width: 80px;">单据状态:</label>
+      <el-select v-model="queryDate.status" placeholder="默认全部平台" style="width: 200px;margin: 5px;">
+        <el-option v-for="item in status" :key="item.value" :label="item.label" :value="item.value" ></el-option>
+      </el-select>
+      <label style="width: 80px;">时间类型:</label>
+      <el-select v-model="queryDate.checkTimeType" placeholder="默认全部平台" style="width: 200px;margin: 5px;">
+        <el-option v-for="item in checkTimeType" :key="item" :label="item" :value="item" ></el-option>
       </el-select>
       <label style="width: 80px;">开始日期:</label>
       <el-date-picker class="filter-item" style="width: 200px;margin: 5px;" v-model="queryDate.startingDate" type="date" placeholder="开始日期"></el-date-picker>
       <!-- 结束日期 -->
       <label style="width: 80px;">结束日期:</label>
       <el-date-picker class="filter-item" style="width: 200px;margin: 5px;" v-model="queryDate.endDay" type="date" placeholder="结束日期"></el-date-picker>
+      <label style="width: 80px;">销售类型:</label>
+      <el-select v-model="queryDate.sellType" placeholder="默认全部平台" style="width: 200px;margin: 5px;">
+        <el-option v-for="item in sellType" :key="item.sellType" :label="item.sellType" :value="item.sellType" ></el-option>
+      </el-select>
+      <label style="width: 80px;">附加业务:</label>
+      <el-select v-model="queryDate.additionType" collapse-tags multiple placeholder="默认全部平台" style="width: 200px;margin: 5px;">
+        <el-option v-for="item in additionType" :key="item.additionName" :label="item.additionName" :value="item.additionName" ></el-option>
+      </el-select>
+      <label style="width: 80px;">渠道:</label>
+      <el-select v-model="queryDate.channel" placeholder="默认全部平台" style="width: 200px;margin: 5px;">
+        <el-option v-for="item in channel" :key="item.id" :label="item.channelName" :value="item.id" ></el-option>
+      </el-select>
       <!-- 客户信息 -->
       <label style="width: 80px;">客户姓名:</label>
-      <el-input  placeholder="可以输入客户姓名查询" v-model="queryDate.clientName" style="width: 200px; margin: 5px;" class="filter-item"   />
+      <el-input  placeholder="输入客户姓名查询" v-model="queryDate.clientName" style="width: 200px; margin: 5px;" class="filter-item"   />
       <label style="width: 80px;">客户车牌:</label>
-      <el-input  placeholder="可以输入客户车牌查询" v-model="queryDate.clientCarNum" style="width: 200px; margin: 5px;" class="filter-item"   />
+      <el-input  placeholder="输入客户车牌查询" v-model="queryDate.clientCarNum" style="width: 200px; margin: 5px;" class="filter-item"   />
       <span slot="footer" class="dialog-footer">
         <el-button @click="clearQueryDate()">取 消</el-button>
         <el-button type="primary" @click="searchQueryDate() ">确 定</el-button>
@@ -371,6 +393,14 @@
   margin-right: 0;
   margin-bottom: 0;
   width: 250px;
+}
+/* 解决 el-bable 列头与列表无法对齐 */
+.el-table th {
+	display: table-cell!important;
+}
+.wrap {
+  height: 100vh;
+  overflow-y: auto;
 }
 
 </style>
@@ -428,6 +458,24 @@ let checkPhone = (rule,value,callback) => {
         additionType: '',
         // 单据信息
         receipts:[],
+        // 该用户省份权限内的渠道列表
+        channel:[],
+        // 查询时间类型
+        checkTimeType:[],
+        // 状态集合
+        status: [],
+        // 全部查询true/条件查询false
+        searchType:true,
+
+        busy: false,
+        // 全部查询信息
+        allSearchMsg:{
+          userId : '',
+          page: 1,
+          count:25
+        },
+
+
         // 数据加载
         loading: true,
         // opp,
@@ -446,9 +494,11 @@ let checkPhone = (rule,value,callback) => {
         statusOptions: ['published', 'draft', 'deleted'],
         // 查询条件
         queryDate:{
-          // 起始日期
+          // 类型
+          type: 'DT',
+          // 起始日期 //默认本月1日
           startingDate:'',
-          // 终止日期
+          // 终止日期 默认次月1日
           endDay:'',
           // 销售名称
           sellName:'',
@@ -458,6 +508,18 @@ let checkPhone = (rule,value,callback) => {
           clientName:'',
           // 客户车牌
           clientCarNum:'',
+          // 查询时间类型
+          checkTimeType:'创建时间',
+          // 销售类型
+          sellType:'',
+          // 附加业务
+          additionType:'',
+          // 渠道
+          channel:'',
+          // 用户Id
+          userId: '',
+          // 单据状态
+          status: ''
         },
         // 根据页面宽度变动浮窗宽度
         DialogWidth: '60%',
@@ -505,7 +567,7 @@ let checkPhone = (rule,value,callback) => {
     methods: {
       // 初始化操作
       getDate(){
-        this.$store.dispatch('sell/sellmsg').then(res => {
+        this.$store.dispatch('sell/sellmsg',this.allSearchMsg).then(res => {
           this.user = res.user
           this.citys = res.citys
           this.carTyep = res.carTyep
@@ -513,6 +575,7 @@ let checkPhone = (rule,value,callback) => {
           this.sellType = res.sellType
           this.additionType = res.additionType
           this.receipts = res.receipts
+          this.channel = res.channel
 
           // 将省份信息加工
           this.provinceProcess(res)
@@ -583,12 +646,16 @@ let checkPhone = (rule,value,callback) => {
         console.log(firstDay)
         return firstDay
       },
-      // 获取今天日期
+      // 获取今天日期 > 获取次月1日
       getToday(){
         let moment = require('moment')
-        let date=new Date()
-        let toDay = moment(date).format("YYYY-MM-DD")
+        let date = new Date()
+        let year = date.getFullYear();//获取当前年
+        let month = date.getMonth()+2 // 获取次月
+        let toDay = year+'-'+month+'-'+'01'
+        let toDatoDayy = moment(date).format("YYYY-MM-DD")
         console.log(toDay)
+        // 返回次月1号
         return toDay
       },
       ifScreenWidth(width,num){
@@ -749,10 +816,11 @@ let checkPhone = (rule,value,callback) => {
         },
         // 根据条件查询响应的单据
         searchQueryDate(){
-          console.log(this.queryDate)
+          this.loading = true
           this.searchDialog = false
           this.$store.dispatch('sell/searchQueryDate',this.queryDate).then(res => {
             this.receipts = res.carReceipts
+            this.loading = false
             console.log(res)
             this.$message({
               type: 'success',
@@ -775,7 +843,55 @@ let checkPhone = (rule,value,callback) => {
           this.queryDate.TPId = ''
           this.queryDate.clientName = ''
           this.queryDate.clientCarNum = ''
-        }
+        },
+        // 归属地发生改变后，清空平台
+        clearTP(){
+          this.temp.thirdParty = ''
+        },
+        // 初始化查询时间类型
+        resteCheckTimeType(){
+          this.checkTimeType = []
+          this.checkTimeType.push('创建时间')
+          this.checkTimeType.push('收款时间')
+          this.checkTimeType.push('安装时间')
+        },
+        resteCheckStatusType(){
+          this.status = []
+          this.status.push({value:"0",label:"已作废"})
+          this.status.push({value:"1",label:"进行中"})
+          this.status.push({value:"2",label:"收款中"})
+          this.status.push({value:"3",label:"安装中"})
+          this.status.push({value:"4",label:"已完成"})
+          this.status.push({value:"-1",label:"已退款"})
+        },
+        // 当前页面刷新
+        pageRefresh(){
+          this.$router.go(0)
+        },
+        // 滚动加载
+        load(){
+          this.loading = true
+           setTimeout(() => {
+             this.allSearchMsg.page += 1
+             this.loading = false
+             this.disabled()
+           },2000)
+
+          console.log(this.allSearchMsg.page)
+
+          // this.$store.dispatch('sell/loadSellMsg',this.allSearchMsg).then(res => {
+          //     console.log(res)
+          // })
+        },
+        // 是否禁用滚动加载
+        disabled(){
+          return this.loading || this.noMore
+        },
+        //
+        noMore () {
+          return this.allSearchMsg.page >= 20
+        },
+
     },
   // 初始化
   created() {
@@ -785,6 +901,10 @@ let checkPhone = (rule,value,callback) => {
     this.queryDate.startingDate = this.getThisMonthFirstDay()
     this.queryDate.endDay = this.getToday()
     this.remakeQueryDate()
+    this.resteCheckTimeType()
+    this.queryDate.userId = this.$store.state.user.userMsg.id
+    this.allSearchMsg.userId = this.$store.state.user.userMsg.id
+    this.resteCheckStatusType()
   }
 }
 </script>

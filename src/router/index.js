@@ -54,6 +54,7 @@ export const constantRoutes = [
   {
 	// 登陆页面
     path: '/login',
+    meta: {title: '登录'},
     component: () => import('@/views/login/index'),
     hidden: true
   },
@@ -407,13 +408,13 @@ export const asyncRoutes = [
     path: '/user',
     component: Layout,
     name: '用户模块',
-    meta: {title: '用户管理', icon: 'clipboard',roles: ['R1002','R1001']},
+    meta: {title: '用户信息', icon: 'peoples',roles: ['R1002','R1001','R1003','R1004','R1005']},
     children: [
       {
         path: 'users',
         component: () => import('@/views/yd-user/user'),
         name: '用户管理',
-        meta: {title: '用户管理', icon: 'clipboard',roles: ['R1002','R1001']},
+        meta: {title: '用户管理', icon: 'user',roles: ['R1002','R1001']},
 
       },
       {
@@ -421,7 +422,12 @@ export const asyncRoutes = [
         component: () => import('@/views/yd-user/authority'),
         name: '权限管理',
         meta: {title: '权限管理', icon: 'clipboard',roles: ['R1002','R1001']},
-
+      },
+      {
+        path: 'personage-msg',
+        component: () => import('@/views/yd-user/personage-msg'),
+        name: '个人信息',
+        meta: {title: '个人信息', icon: 'clipboard'},
       }
     ]
   },
@@ -432,27 +438,25 @@ export const asyncRoutes = [
     component: Layout,
     name: '报单模块',
     redirect: '/sell/index',
-    meta: {title: '报单管理', icon: 'clipboard' },
+    meta: {title: '报单管理', icon: 'list' },
     children: [
       {
         path: 'index',
         component: () => import('@/views/sell/index'),
         name: '列表',
-        meta: {title: '报单大厅', icon: 'clipboard',roles: ['R1001', 'R1002','R1003','R1005']},
-
-
+        meta: {title: '报单大厅', icon: '大厅',roles: ['R1001', 'R1002','R1003','R1005']},
       },
       {
         path: 'my-sell',
         component: () => import('@/views/sell/my-sell'),
         name: '我的报单',
-        meta: {title: '我的报单', icon: 'clipboard'}
+        meta: {title: '我的报单', icon: 'user'}
       },
       {
         path: 'sell-check',
         component: () => import('@/views/sell/sell-check'),
         name: '报单审核',
-        meta: {title: '报单审核', icon: 'clipboard',roles: ['R1001', 'R1002','R1003','R1004']},
+        meta: {title: '报单审核', icon: 'skill',roles: ['R1001', 'R1002','R1003','R1004']},
 
       }
     ]
@@ -462,37 +466,37 @@ export const asyncRoutes = [
     path: '/data',
     component: Layout,
     name: '数据管理',
-    meta: {title: '数据管理', icon: 'clipboard',roles: ['R1001','R1003','R1004']},
+    meta: {title: '数据管理', icon: '数据管理',roles: ['R1001','R1003','R1004']},
     children: [
       {
         path: 'channel',
         component: () => import('@/views/data-management/channel'),
         name: '渠道管理',
-        meta: {title: '渠道管理', icon: 'clipboard',roles: ['R1001','R1003']},
+        meta: {title: '渠道管理', icon: '讨论区',roles: ['R1001','R1003']},
       },
       {
         path: 'car-type',
         component: () => import('@/views/data-management/car-type'),
         name: '车型管理',
-        meta: {title: '车型管理', icon: 'clipboard',roles: ['R1001']},
+        meta: {title: '车型管理', icon: '车型',roles: ['R1001']},
       },
       {
         path: 'sell-type',
         component: () => import('@/views/data-management/sell-type'),
         name: '销售类型',
-        meta: {title: '销售类型', icon: 'clipboard',roles: ['R1001']},
+        meta: {title: '销售类型', icon: '类型',roles: ['R1001']},
       },
       {
         path: 'equipment-msg',
         component: () => import('@/views/data-management/equipment-msg'),
         name: '设备型号',
-        meta: {title: '设备型号', icon: 'clipboard',roles: ['R1001']},
+        meta: {title: '设备型号', icon: '设备',roles: ['R1001']},
       },
       {
         path: 'inventory',
         component: () => import('@/views/data-management/inventory'),
         name: '设备库存',
-        meta: {title: '设备库存', icon: 'clipboard',roles: ['R1001','R1004']},
+        meta: {title: '设备库存', icon: '库存',roles: ['R1001','R1004']},
       }
     ]
   }

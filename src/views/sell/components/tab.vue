@@ -56,6 +56,15 @@
                <el-form-item label="收款方:">
                  <span>{{ props.row.gatheringType }}</span>
                </el-form-item>
+               <el-form-item label="收款图片:">
+                 <div class="demo-image__preview" v-for="item in props.row.imageUrls" :key="item.id" >
+                   <el-image
+                     style="width: 100px; height: 100px"
+                     :src="item"
+                     :preview-src-list="props.row.imageUrls">
+                   </el-image>
+                 </div>
+               </el-form-item>
             </el-form>
           </template>
         </el-table-column>
@@ -70,7 +79,7 @@
         <el-table-column
           header-align="center"
           align="center"
-          min-width="70px"
+          width="60px"
           label="创建人"
           prop="user.userName">
         </el-table-column>
@@ -137,24 +146,27 @@
            <el-table-column
              header-align="center"
              align="center"
-             label="到店确认">
+             label="信息确认">
              <template slot-scope="scope">
                <el-button
                  v-if="clickType === 'tReachCheck'"
-                 size="mini"
-                 type="danger"
+                 class="filter-item" type="danger"
+                 size="small"
+                 plain
                  @click="tReachCheck(scope.$index,scope.row)">
                  {{checkType}}</el-button>
                <el-button
                  v-if="clickType === 'tGatheringCheck'"
-                 size="mini"
-                 type="danger"
+                 class="filter-item" type="danger"
+                 size="small"
+                 plain
                  @click="tGatheringCheck(scope.$index,scope.row)">
                  {{checkType}}</el-button>
                <el-button
                  v-if="clickType === 'tInstallCheck'"
-                 size="mini"
-                 type="danger"
+                 class="filter-item" type="danger"
+                 size="small"
+                 plain
                  @click="tInstallCheck(scope.$index,scope.row)">
                  {{checkType}}</el-button>
              </template>
@@ -164,33 +176,33 @@
       <el-dialog
         title="上传收款图片"
         :visible.sync="gatheringVisible"
-        width="80%">
+        width="400px">
         <span>收款图片:</span>
         <el-upload
           ref="upload"
-          action="http://192.168.0.103:9527/dev-api/sell/uploadFile"
+          action="http://49.234.210.89/prod-api/sell/uploadFile"
           :headers="headers()"
           list-type="picture-card"
-
-          :limit="3"
+          limit=1
           accept=".jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF,.zip"
           style="width: 100%;"
           :on-preview="handlePreview"
+          :on-success="handleAvatarSuccess"
           :on-remove="handleRemove"
           :data="getfileData()"
           :auto-upload="false">
           <el-button size="small" type="primary">点击上传</el-button>
           <div slot="tip" class="el-upload__tip" style="width: 100%;">
-            只能上传jpg/png文件，且不超过500kb
+            只能上传图片文件,且只能上传一张!
           </div>
         </el-upload>
         <el-dialog :visible.sync="dialogVisible">
           <img width="100%" :src="dialogImageUrl" alt="">
         </el-dialog>
-       <span slot="footer" class="dialog-footer">
-          <el-button @click="cancelDialog()">取 消</el-button>
-          <el-button type="primary" @click="tGatheringCheckImages()">确 定</el-button>
-        </span>
+        <span slot="footer" class="dialog-footer">
+           <el-button @click="cancelDialog()">取 消</el-button>
+           <el-button type="primary" @click="tGatheringCheckImages()">确 定</el-button>
+         </span>
       </el-dialog>
 
 
@@ -200,39 +212,63 @@
       <el-dialog
         title="安装信息"
         :visible.sync="searchDialog"
-        width="90%">
-        <!-- 标题文本查询 -->
-        <label style="width: 80px;">ICCID:</label>
-        <el-input  placeholder="销售名称" v-model="installMsg.iccid" style="width: 200px; margin: 5px;" class="filter-item"   />
-        <label style="width: 80px;">设备品牌:</label>
-
-        <!-- 结束日期 -->
-        <label style="width: 80px;">设备型号:</label>
-        <el-date-picker class="filter-item" style="width: 200px;margin: 5px;" v-model="queryDate.endDay" type="date" placeholder="结束日期"></el-date-picker>
-        <!-- 客户信息 -->
-        <label style="width: 80px;">设备尺寸:</label>
-        <el-input  placeholder="可以输入客户姓名查询" v-model="installMsg.iccid" style="width: 200px; margin: 5px;" class="filter-item"   />
-        <label style="width: 80px;">客户车牌:</label>
-        <el-input  placeholder="可以输入客户车牌查询" v-model="installMsg.iccid" style="width: 200px; margin: 5px;" class="filter-item"   />
+        width="400px">
+        <el-form :model="installMsg" ref="installMsg" :rules="rules" status-icon>
+          <el-form-item label="ICCID:" label-width="90px" prop="iccid">
+             <el-input placeholder="请填写型号" v-model="installMsg.iccid" autocomplete="off" style="width: 230px;"></el-input>
+          </el-form-item>
+          <el-form-item label="设备型号:" label-width="90px" prop="equipment">
+              <el-select v-model="installMsg.equipment" placeholder="请选择安装的设备型号" style="width: 230px;">
+                <el-option
+                  v-for="item in inventoryMsg"
+                  :key="item.id"
+                  :label="item.value"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+          </el-form-item>
+          <el-form-item label="车牌号码:" label-width="90px" prop="carNum">
+             <el-input placeholder="请填写车牌号码" v-model="installMsg.carNum" autocomplete="off" style="width: 230px;"></el-input>
+          </el-form-item>
+        </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="searchDialog = false">取 消</el-button>
-          <el-button type="primary" @click="searchDialog = false">确 定</el-button>
+          <el-button @click="clearDialog()">取 消</el-button>
+          <el-button type="primary" @click="checkInstallMsg()">确 定</el-button>
         </span>
       </el-dialog>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
-        </div>
-      </el-dialog>
+
       </div>
 
     </template>
 
 <script>
+import {isCarNum} from '@/utils/validate'
+
+// 车牌号码检验
+let checkCarNum = (rule,value,callback) => {
+  if (!isCarNum(value)){
+    return callback(new Error('请输入正确车牌号码'))
+    }
+  callback()
+}
+
   export default{
     data(){
+      // iccid验证
+      let checkIccid = (rule,value,callback) => {
+        if(value.length != 19){
+          return callback(new Error('请检查iccid的长度!'))
+        }
+        this.$store.dispatch('data/checkIccid',value).then(res => {
+          if(res.result){
+            callback()
+          } else {
+            return callback(new Error(res.message))
+          }
+        })
+      }
       return {
-        formLabelWidth: '120px',
+        checkCarNum,
         dialogFormVisible:false,
         gatheringVisible: false,
         dialogImageUrl: '',
@@ -255,12 +291,21 @@
           fileUserId:''
         },
         installMsg: {
+          // 用户id
+          userId:'',
           iccid: '',
-          equipmentBrand: '',
-          equipmentTypeNum: '',
-          size: ''
+          equipment:'',
+          // 车牌号码
+          carNum:'',
+          // 单据id
+          carReceiptsId:''
         },
         screenWidth: document.body.clientWidth,
+        rules:{
+          iccid:[{required: true, validator: checkIccid, trigger:'blur'}],
+          equipment:[{required: true, message: '请选择收货省份！', trigger:'change'}],
+          carNum:[{required: true, validator: checkCarNum, trigger:'blur'}]
+        }
       }
     },
     name:'tab',
@@ -274,8 +319,8 @@
         type: String
       },
       status:'',
-      // 设备品牌
-      equipmentBrand:{
+      // 设备库存
+      inventoryMsg:{
         type: Array
       },
 
@@ -289,9 +334,7 @@
         checkData.data.time = Date.parse(new Date())
         console.log(checkData)
         this.$store.dispatch('sell/reachCheck',checkData).then(res => {
-          // 删除某行数据
-          this.reachCheck.splice(index)
-          popup(res.type,res.message)
+          this.$router.go(0)
         })
       },
       // 发送收款确认请求,带图片
@@ -302,15 +345,26 @@
        if(images.length < 1){
          // 错误信息
        } else {
-         let checkData = this.checkData
+
          // 发送上传图片请求
          this.$refs.upload.submit();
-         // 确认收款请求
-         this.$store.dispatch('sell/reachCheck',checkData).then(res => {
-          this.$router.go(0)
-         })
+         // 检查图片是否上传成功了,然后提交收款确认请求，否则不提交
+          
        }
 
+
+      },
+      // 文件上传后的钩子
+      handleAvatarSuccess(response, file, fileList){
+        if(response.code == 20000){
+          // 确认收款请求
+          let checkData = this.checkData
+          this.$store.dispatch('sell/reachCheck',checkData).then(res => {
+            // 当前页刷新
+           this.$router.go(0)
+          })
+        }
+        console.log(response)
       },
       // 收款确认,确认金额,上传收款图
       tGatheringCheck(index,row){
@@ -325,16 +379,6 @@
         this.fileData.fileType = 'gatheringCheck'
         // 绑定用户ID
         this.fileData.fileUserId = this.$store.state.user.userMsg.jobNum
-        console.log(this.fileData)
-        // let checkData = {id:row.id,type:'reachCheck', data:{time:''}}
-        // checkData.data.time = Date.parse(new Date())
-        // console.log(checkData)
-
-        // this.$store.dispatch('sell/reachCheck',checkData).then(res => {
-        //   // 删除某行数据
-        //   this.reachCheck.splice(index)
-        //   popup(res.type,res.message)
-        // })
       },
       // 上传图片
       beforeUpload(file){
@@ -346,12 +390,22 @@
       //安装完成确认,需要填写其他相关信息
       tInstallCheck(index,row){
         console.log('tInstallCheck')
-        this.dialogFormVisible = true
-        this.checkData.id = row.id
-        this.checkData.type = 'gatheringCheck'
-        this.checkData.data.time = Date.parse(new Date())
-
-
+        this.resetInstallMsg()
+        this.installMsg.userId = this.$store.state.user.userMsg.id
+        this.installMsg.carReceiptsId = row.id
+        this.searchDialog = true
+      },
+      // 安装信息重置
+      resetInstallMsg(){
+        this.installMsg = {
+          // 用户id
+          userId:'',
+          iccid: '',
+          equipment:'',
+          carNum:'',
+          // 单据id
+          carReceiptsId:''
+        }
       },
       handleRemove(file) {
         console.log(file);
@@ -418,6 +472,30 @@
          return false
        }
      },
+     handleChange(){
+       this.installMsg.equipment = ''
+     },
+     // 安装信息对话框取消
+     clearDialog(){
+       this.resetInstallMsg()
+       this.$refs['installMsg'].resetFields()
+       this.searchDialog = false
+     },
+     // 安装信息检查
+     checkInstallMsg(){
+       this.$refs['installMsg'].validate(valid => {
+         if(valid){
+           // 补充信息
+           // 验证通过,发送请求
+           this.$store.dispatch('sell/pushInstallMsg',this.installMsg).then(res => {
+             // 刷新当前页面
+             this.$router.go(0)
+           })
+         } else {
+           return false
+         }
+       })
+     }
     }
 
   }

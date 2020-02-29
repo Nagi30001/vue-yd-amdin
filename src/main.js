@@ -29,6 +29,9 @@ Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
 Vue.use(require('vue-moment'))
 
+// 滚动加载插件
+import infiniteScroll from 'vue-infinite-scroll'
+Vue.use(infiniteScroll)
 
 /**
  * If you don't want to use mock-server

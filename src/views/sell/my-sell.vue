@@ -57,7 +57,7 @@
                   <el-form-item label="收款方:">
                     <span>{{ props.row.gatheringType }}</span>
                   </el-form-item>
-                  <el-form-item label="操作:" v-if="checkShowDelet(props.row.receiptsStatus)" >
+                  <el-form-item label="操作:" v-if="checkShowDelet(props.row)" >
                     <!-- 提示 -->
                     <el-popover
                       placement="top"
@@ -213,12 +213,12 @@
       }
     },
     // 判断删除单据是否显示,已完成不显示,其他状态均可显示
-    checkShowDelet(status){
-      if(status == 0 || status == 4 ){
-        return false
-      } else {
-        return true
-      }
+    checkShowDelet(row){
+     if(row.userId != this.$store.state.user.userMsg.id || row.receiptsStatus == 0 || row.receiptsStatus == 4 ){
+       return false
+     } else {
+       return true
+     }
     },
     // 作废单据
     cancellation(row){
@@ -227,13 +227,14 @@
         this.$router.go(0)
       })
       console.log(row)
-    }
-      },
-      // 初始化数据
-      created() {
-        // 初始化数据
-        this.getData()
-      }
+    },
+
+  },
+  // 初始化数据
+  created() {
+    // 初始化数据
+    this.getData()
+  }
 
     }
 </script>
@@ -250,5 +251,9 @@
       margin-right: 0;
       margin-bottom: 0;
       width: 250px;
+    }
+    /* 解决 el-bable 列头与列表无法对齐 */
+    .el-table th {
+    	display: table-cell!important;
     }
 </style>

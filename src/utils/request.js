@@ -10,7 +10,7 @@ const service = axios.create({
   headers: { 'content-type': 'application/json' },
   // headers: { 'Access-Control-Allow-Origin': '*' },
   withCredentials: true, // send cookies when cross-domain requests
-  timeout: 5000 ,// request timeout
+  timeout: 50000 ,// request timeout
 })
 
 // request interceptor
@@ -60,6 +60,8 @@ service.interceptors.response.use(
 
     // if the custom code is not 20000, it is judged as an error.
     if (res.code !== 20000) {
+      console.log(process.env.VUE_APP_BASE_API)
+      console.log(res)
       Message({
         message: res.message || '账号或密码错误!',
         type: 'error',
@@ -89,7 +91,7 @@ service.interceptors.response.use(
     Message({
       message: error.message,
       type: 'error',
-      duration: 5 * 1000
+      duration: 5 * 10000
     })
     return Promise.reject(error)
   }

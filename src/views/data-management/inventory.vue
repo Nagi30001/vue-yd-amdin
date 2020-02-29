@@ -1,24 +1,24 @@
 <template>
   <div>
-    <el-tabs type="border-card" style="margin: 30px;" v-model="activeName" >
-    <el-tab-pane label="设备库存" name="first">
-      <inventoryTab :informationMsg="equipmentMsg.informationMsg" ></inventoryTab>
+    <el-tabs type="border-card" style="margin: 10px;" v-model="activeName" >
+    <el-tab-pane label="设备库存" name="first" v-if="checkTab('all')">
+      <inventoryTab :informationMsg="equipmentMsg.informationMsg"></inventoryTab>
     </el-tab-pane>
-    <el-tab-pane label="设备采购">
-      <purchaseTab :purchaseMsgs="equipmentMsg.purchaseMsg" :platform="equipmentMsg.platform" :brand="equipmentMsg.equipmentBrand" :type="equipmentMsg.equipmentType" :province="equipmentMsg.provinces" :citis="equipmentMsg.citis"></purchaseTab>
+    <el-tab-pane label="设备采购" v-if="checkTab('all')">
+      <purchaseTab :purchaseMsgs="equipmentMsg.purchaseMsg" :userMsg="equipmentMsg.user" :platform="equipmentMsg.platform" :brand="equipmentMsg.equipmentBrand" :type="equipmentMsg.equipmentType" :province="equipmentMsg.provinces" :citis="equipmentMsg.citis"></purchaseTab>
     </el-tab-pane>
-    <el-tab-pane label="设备转移">
-      <transferTab :transferMsg="equipmentMsg.transferMsg"></transferTab>
+    <el-tab-pane label="设备转移" v-if="checkTab('all')">
+      <transferTab :transferMsg="equipmentMsg.transferMsg" ></transferTab>
     </el-tab-pane>
-    <el-tab-pane label="设备维修">
-      <maintainTab :maintainMsg="equipmentMsg.maintainMsg"></maintainTab>
+    <el-tab-pane label="设备维修" v-if="checkTab('YD')">
+      <maintainTab :maintainMsg="equipmentMsg.maintainMsg" ></maintainTab>
     </el-tab-pane>
-    <el-tab-pane label="设备报废">
-      <scrapTab :scrapMsg="equipmentMsg.scrapMsg"></scrapTab>
+    <el-tab-pane label="设备报废" v-if="checkTab('YD')">
+      <scrapTab :scrapMsg="equipmentMsg.scrapMsg" ></scrapTab>
     </el-tab-pane>
-    <el-tab-pane label="更换记录">
-      <scrapTab :scrapMsg="equipmentMsg.scrapMsg"></scrapTab>
-    </el-tab-pane>
+<!--    <el-tab-pane label="更换记录" v-if="checkTab('all')">
+      <scrapTab :scrapMsg="equipmentMsg.scrapMsg" ></scrapTab>
+    </el-tab-pane> -->
   </el-tabs>
 
   <!-- 新增销售类型弹出框 -->
@@ -92,7 +92,9 @@
             // 省份
             provinces: [],
             // 城市
-            citis: []
+            citis: [],
+            // 用户信息
+            user: '',
           }
 
         }
@@ -107,16 +109,33 @@
         // 初始化数据
         getData(){
           this.$store.dispatch('data/getEquipmentInventory').then(res => {
-            this.equipmentMsg.informationMsg = res.informationMsg
-            this.equipmentMsg.purchaseMsg = res.purchaseMsg
-            this.equipmentMsg.transferMsg = res.transferMsg
-            this.equipmentMsg.maintainMsg = res.maintainMsg
-            this.equipmentMsg.scrapMsg = res.scrapMsg
-            this.equipmentMsg.changeMsg = res.changeMsg
-            this.equipmentMsg.equipmentMsg = res.equipmentMsg
-            this.equipmentMsg.provinces = res.provinces
-            this.equipmentMsg.citis = res.cities
-            this.equipmentMsg.platform = res.platform
+            this.equipmentMsg.user = this.$store.state.user.userMsg
+            console.log('123333')
+            console.log(this.equipmentMsg.user)
+            if(this.equipmentMsg.user.roleNum == 'R1001' || this.equipmentMsg.user.roleNum == 'R1002' || this.equipmentMsg.user.roleNum == 'R1005'){
+              console.log('管理用户')
+              this.equipmentMsg.informationMsg = res.informationMsg
+              this.equipmentMsg.purchaseMsg = res.purchaseMsg
+              this.equipmentMsg.transferMsg = res.transferMsg
+              this.equipmentMsg.maintainMsg = res.maintainMsg
+              this.equipmentMsg.scrapMsg = res.scrapMsg
+              this.equipmentMsg.changeMsg = res.changeMsg
+              this.equipmentMsg.equipmentMsg = res.equipmentMsg
+              this.equipmentMsg.provinces = res.provinces
+              this.equipmentMsg.citis = res.cities
+              this.equipmentMsg.platform = res.platform
+            } else {
+              console.log('平台用户')
+              this.equipmentMsg.informationMsg = res.informationMsg
+              this.equipmentMsg.purchaseMsg = res.purchaseMsg
+              this.equipmentMsg.transferMsg = res.transferMsg
+              this.equipmentMsg.changeMsg = res.changeMsg
+              this.equipmentMsg.equipmentMsg = res.equipmentMsg
+              this.equipmentMsg.provinces = res.provinces
+              this.equipmentMsg.citis = res.cities
+              this.equipmentMsg.platform = res.platform
+            }
+
 
             // 设备品牌
             this.equipmentMsg.equipmentMsg.forEach(item => {
@@ -125,8 +144,23 @@
             this.equipmentMsg.equipmentBrand = Array.from(new Set(this.equipmentMsg.equipmentBrand))
             // 设备型号
             this.equipmentMsg.equipmentType = res.equipmentMsg
-            console.log(this.$data)
           })
+        },
+        //
+        checkTab(str){
+          if(this.equipmentMsg.user.roleNum == 'R1001' || this.equipmentMsg.user.roleNum == 'R1002' || this.equipmentMsg.user.roleNum == 'R1005'){
+            if(str == 'all' || str == 'YD'){
+              return true
+            } else {
+              return false
+            }
+          } else {
+            if(str == 'all'){
+              return true
+            } else {
+              false
+            }
+          }
         }
       },
       created() {

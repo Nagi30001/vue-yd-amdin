@@ -1,5 +1,5 @@
 <template>
-  <el-tabs type="border-card" style="margin-top: 30px;margin: 30px;" >
+  <el-tabs type="border-card" style="margin: 10px;" >
     <el-tab-pane label="优道用户">
       <Tab :users="ydUser" :loading="loading" :province="province" :citiesAll="citiesAll" :roles="roles"></Tab>
     </el-tab-pane>

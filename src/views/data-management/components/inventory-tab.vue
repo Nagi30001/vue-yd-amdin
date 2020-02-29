@@ -9,64 +9,76 @@
       :data="informationMsg.filter(data => !search || data.equipmentMsg.equipmentBrand.toLowerCase().includes(search.toLowerCase()))"
       style="width: 100%">
       <el-table-column
+        align="center"
         label="型号ID"
         prop="equipmentMsgId">
       </el-table-column>
       <el-table-column
+        align="center"
         label="平台名称"
         prop="user.userName">
       </el-table-column>
       <el-table-column
+        align="center"
         label="平台类型"
         prop="user.userName">
       </el-table-column>
       <el-table-column
+        align="center"
         label="省份"
-        prop="user.userName">
+        prop="user.province">
       </el-table-column>
       <el-table-column
+        align="center"
         label="城市"
-        prop="user.userName">
+        prop="user.city">
       </el-table-column>
       <el-table-column
+        align="center"
         label="品牌"
-        prop="user.userName">
+        prop="equipmentMsg.equipmentBrand">
       </el-table-column>
       <el-table-column
+        align="center"
         label="型号"
-        prop="user.userName">
+        prop="equipmentMsg.equipmentTypeNum">
       </el-table-column>
       <el-table-column
+        align="center"
         label="尺寸"
-        prop="user.userName">
+        prop="equipmentMsg.size">
       </el-table-column>
       <el-table-column
-        label="总库存"
-        prop="user.userName">
+        align="center"
+        label="总库存">
+        <template slot-scope="scope">
+          <span>{{getSum(scope.row)}}</span>
+        </template>
       </el-table-column>
       <el-table-column
+        align="center"
         label="可用库存"
-        prop="user.userName">
+        prop="awaitInstall">
       </el-table-column>
       <el-table-column
-        label="待维修"
-        prop="user.userName">
-      </el-table-column>
-      <el-table-column
+        align="center"
         label="维修中"
-        prop="user.userName">
+        prop="inMaintain">
       </el-table-column>
       <el-table-column
+        align="center"
         label="待接收"
-        prop="user.userName">
+        prop="awaitReceive">
       </el-table-column>
       <el-table-column
+        align="center"
         label="转移中"
-        prop="user.userName">
+        prop="inInventory">
       </el-table-column>
       <el-table-column
+        align="center"
         label="采购中"
-        prop="user.userName">
+        prop="inPurchase">
       </el-table-column>
       <el-table-column
         width="200px"
@@ -79,7 +91,7 @@
         </template>
       </el-table-column>
     </el-table>
-   </div> 
+   </div>
 </template>
 
 <script>
@@ -92,6 +104,12 @@
     data(){
       return{
         search: '',
+      }
+    },
+    methods:{
+      // 计算总库存
+      getSum(row) {
+        return row.inPurchase + row.awaitReceive + row.inMaintain + row.awaitInstall
       }
     }
   }

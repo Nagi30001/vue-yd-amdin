@@ -1,8 +1,8 @@
 <template>
-  <el-tabs type="border-card" style="margin-top: 30px;margin: 30px;">
+  <el-tabs type="border-card" style="margin: 10px;">
     <el-tab-pane label="渠道管理">
   <div>
-    <el-button type="primary" icon="el-icon-edit"  @click="dialogFormVisible = true">新增渠道</el-button>
+    <el-button type="primary" plain size="small" style="margin: 5px;" icon="el-icon-circle-plus"  @click="addChannelMsg()">新增渠道</el-button>
 
   <el-table
     size="mini"
@@ -60,10 +60,10 @@
   </el-table>
 
   <!-- 新增或修改弹出的对话框 -->
-  <el-dialog title="收货地址" :visible.sync="dialogFormVisible">
+  <el-dialog :title="checkTitle ? '新增渠道' : '修改信息'" :visible.sync="dialogFormVisible" width="400px">
     <el-form :model="channelMsg">
-      <el-form-item label="省份" :label-width="formLabelWidth">
-        <el-select v-model="channelMsg.province" @blur="clearCity" placeholder="请选择活动区域" style="width: 200px;">
+      <el-form-item label="省份:" :label-width="formLabelWidth">
+        <el-select v-model="channelMsg.province" @blur="clearCity" placeholder="请选择渠道省份!" style="width: 200px;">
           <el-option
             v-for="item in provinces"
             :label="item.province"
@@ -72,8 +72,8 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="城市" :label-width="formLabelWidth">
-        <el-select v-model="channelMsg.city" @focus="getCity" placeholder="请选择活动区域" style="width: 200px;">
+      <el-form-item label="城市:" :label-width="formLabelWidth">
+        <el-select v-model="channelMsg.city" @focus="getCity" placeholder="请选择渠道城市!" style="width: 200px;">
           <el-option
             v-for="item in cities"
             :label="item.city"
@@ -82,11 +82,11 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="渠道名称" :label-width="formLabelWidth">
-        <el-input v-model="channelMsg.channelName" autocomplete="off" style="width: 200px;"></el-input>
+      <el-form-item label="渠道名称:" :label-width="formLabelWidth">
+        <el-input v-model="channelMsg.channelName" autocomplete="off" style="width: 200px;" placeholder="请填写渠道名称!"></el-input>
       </el-form-item>
-      <el-form-item label="地址" :label-width="formLabelWidth" >
-        <el-input v-model="channelMsg.site" autocomplete="off" style="width: 200px;"></el-input>
+      <el-form-item label="地址:" :label-width="formLabelWidth" >
+        <el-input v-model="channelMsg.site" autocomplete="off" style="width: 200px;" placeholder="请填写渠道地址!"></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -110,6 +110,8 @@
     },
     data() {
       return {
+        // true=新增 false=修改
+        checkTitle: true,
         user:'',
         channelMsgs:[],
         search: '',
@@ -122,7 +124,7 @@
           type:'new'
         },
         dialogFormVisible: false,
-        formLabelWidth: '120px',
+        formLabelWidth: '90px',
         provinces:[],
         citiesAll:[],
         cities:[]
@@ -162,6 +164,7 @@
       },
       //  修改信息
       handleEdit(index, row) {
+        this.checkTitle = false
         this.dialogFormVisible = true
         this.channelMsg.province = row.province
         this.channelMsg.city = row.city
@@ -226,6 +229,16 @@
         return row.user.id == this.user.id
         // return true
 
+      },
+      // 新增
+      addChannelMsg(){
+        this.checkTitle = true
+        this.dialogFormVisible = true
+      },
+      // 修改
+      updateChannelMsg(){
+        this.checkTitle = false
+        this.dialogFormVisible = true
       }
 
     },

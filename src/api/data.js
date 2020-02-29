@@ -68,6 +68,57 @@ export function updateEquipment(data) {
   })
 }
 
+export function getCarTypeMsg() {
+  return request({
+    url: '/data/getCarTypeMsg',
+    method: 'get'
+  })
+}
 
+export function addCarType(data) {
+  return request({
+    url: '/data/addCarType',
+    method: 'post',
+    data
+  })
+}
 
+export function updateCarType(data) {
+  return request({
+    url: '/data/updateCarType',
+    method: 'post',
+    data
+  })
+}
 
+export function addPurchaseMsg(data) {
+  return request({
+    url: '/data/addPurchaseMsg',
+    method: 'post',
+    data
+  })
+}
+
+export function scrapPurchaseMsg(data) {
+  return request({
+    url: '/data/scrapPurchaseMsg',
+    method: 'post',
+    data
+  })
+}
+
+export function receivePurchaseMsg(data) {
+  return request({
+    url: '/data/receivePurchaseMsg',
+    method: 'post',
+    data
+  })
+}
+
+export function checkIccid(iccid) {
+  return request({
+    url: '/data/checkIccid',
+    method: 'post',
+    params : {iccid}
+  })
+}

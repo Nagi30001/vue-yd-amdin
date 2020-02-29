@@ -1,4 +1,4 @@
-import { sellmsg, addSellReceipts, reachCheckMsg, reachCheck, uploadFile, getMyReceipts, cancellation, searchQueryDate} from '@/api/sell'
+import { sellmsg, addSellReceipts, reachCheckMsg, reachCheck, uploadFile, getMyReceipts, cancellation, searchQueryDate, pushInstallMsg, loadSellMsg} from '@/api/sell'
 import { getToken } from '@/utils/auth'
 
 
@@ -48,21 +48,10 @@ const mutations = {
 
 const actions = {
   // 初始化获取信息
-  sellmsg({commit}) {
-    // 获取当前用户token
-   const token = getToken()
-   console.log('toekn:'+state.token)
+  sellmsg({commit},allSearchMsg) {
    // 发送请求
    return new Promise((resolve, reject) => {
-     sellmsg(getToken()).then(res => {
-
-       // commit('SET_USER',res.user)
-       // commit('SET_CITYS',res.citys)
-       // commit('SET_CARTYPE',res.carTyep)
-       // commit('SET_THIRDPARTYMSG',res.thirdPartyMsg)
-       // commit('SET_SELLTYPE',res.sellType)
-       // commit('SET_ADDITIONTYPE',res.additionType)
-       // commit('SET_RECEIPTS',res.receipts)
+     sellmsg(allSearchMsg).then(res => {
        // 回调把数据传回去
        resolve(res)
      }).catch(error => {
@@ -70,6 +59,21 @@ const actions = {
      })
    })
   },
+  
+  // 加载信息
+  loadSellMsg({commit},allSearchMsg) {
+   // 发送请求
+   return new Promise((resolve, reject) => {
+     loadSellMsg(allSearchMsg).then(res => {
+       // 回调把数据传回去
+       resolve(res)
+     }).catch(error => {
+       reject(error)
+     })
+   })
+  },
+  
+  
   // 获取用户需要审核的信息
   reachCheckMsg({ commit }){
     return new Promise((resolve, reject) => {
@@ -140,7 +144,18 @@ const actions = {
         resolve(res)
       })
     })
+  },
+
+  // 设备安装确认
+  pushInstallMsg({commit},installMsg){
+    return new Promise((resolve, reject) => {
+      pushInstallMsg(installMsg).then(res => {
+        resolve(res)
+      })
+    })
   }
+
+
 }
 
 export default {

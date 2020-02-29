@@ -46,6 +46,7 @@
             :check-type="checkName.install"
             :status="statusName.install"
             :click-type="checkFuntion.install"
+            :inventoryMsg="inventoryMsg"
           />
         </el-tab-pane>
       </el-tabs>
@@ -102,7 +103,13 @@ export default {
         value1: '2020-01-01',
         value2: '2020-01-24'
       },
-      activeName: 'first'
+      activeName: 'first',
+      // 库存信息
+      inventoryMsgAll: [],
+      inventoryMsg: [],
+      // iccid信息集
+      iccids: [],
+      iccid: []
     }
   },
   created() {
@@ -116,12 +123,51 @@ export default {
     },
     getDate() {
       this.$store.dispatch('sell/reachCheckMsg').then(res => {
-        console.log(this.$data)
         this.user = res.user
         this.gatheringCheck = res.gatheringCheck
         this.reachCheck = res.reachCheck
         this.installCheck = res.installCheck
         this.loading = false
+        this.inventoryMsgAll = res.inventoryMsg
+        if(res.inventoryMsg != null ){
+          this.inventoryMsgAll.forEach(item => {
+            this.inventoryMsg.push({id:item.equipmentMsgId,value:item.equipmentMsg.equipmentBrand+'-'+item.equipmentMsg.equipmentTypeNum+'-'+item.equipmentMsg.size+'(余:'+item.awaitInstall+'台)'})
+          })
+          this.iccids = res.iccids
+        }
+        
+        // 获取iccid集
+        
+        // 品牌信息
+        // let e = []
+        // this.equipmentMsgAll.forEach(item => {
+        //   e.push(item.equipmentBrand)
+        // })
+        // e = Array.from(new Set(e))
+        // e.forEach(item => {
+        //   this.equipmentMsg.push({value:item,label:item,children:[]})
+        // })
+        // this.equipmentMsg.forEach(item => {
+        //   this.equipmentMsgAll.forEach(i => {
+        //     if(item.value == i.equipmentBrand){
+        //       item.children.push({value:i.equipmentTypeNum,label:i.equipmentTypeNum,children:[]})
+        //     }
+        //   })
+        // })
+        // this.equipmentMsg.forEach(item => {
+        //   item.children.forEach(i => {
+        //     this.equipmentMsgAll.forEach(j => {
+        //       if(j.equipmentBrand == item.value && j.equipmentTypeNum == i.value){
+        //         i.children.push({value:j.size,label:j.size})
+        //       }
+        //     })
+        //   })
+        // })
+        console.log('123')
+        console.log(this.$data)
+
+
+
       })
     },
     treachCheck(index, row) {
@@ -169,5 +215,9 @@ export default {
     margin-right: 0;
     margin-bottom: 0;
     width: 250px;
+  }
+  /* 解决 el-bable 列头与列表无法对齐 */
+  .el-table th {
+  	display: table-cell!important;
   }
 </style>

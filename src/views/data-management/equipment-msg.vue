@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-tabs type="border-card" style="margin-top: 30px;margin: 30px;">
+    <el-tabs type="border-card" style="margin: 10px;">
     <el-tab-pane label="销售类型">
       <el-button type="primary" size="small" plain style="margin: 5px;" icon="el-icon-circle-plus"
       @click="centerDialogVisible = true"
@@ -157,11 +157,13 @@
         // 验证对话框信息
         checkEquipmentMsg(){
           this.$refs['equipmentMsg'].validate((valid) => {
-            if(this.checkPattern){
-              //修改提交
-            } else {
-              //新增提交
-              this.addEquipment()
+            if(valid){
+              if(this.checkPattern){
+                //修改提交
+              } else {
+                //新增提交
+                this.addEquipment()
+              }
             }
           })
         },
@@ -210,11 +212,9 @@
               brand.push(item.equipmentBrand)
             })
             brand = Array.from(new Set(brand))
-            console.log(brand)
             brand.forEach(item => {
               this.brand.push({value:item})
             })
-            console.log(this.brand)
           })
         }
       },

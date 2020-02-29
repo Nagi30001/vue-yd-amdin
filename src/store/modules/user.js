@@ -1,6 +1,6 @@
 // 处理登陆/登出/获取权限/获取token
 
-import { login, logout, getInfo, getUsers, addUser, checkJobNum, updateUser } from '@/api/user'
+import { login, logout, getInfo, getUsers, addUser, checkJobNum, updateUser, updatePassword } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
@@ -104,13 +104,14 @@ const actions = {
   // user logout
   // 用户登出
   logout({ commit, state, dispatch }) {
+    console.log('退出第一步')
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
         removeToken()
         resetRouter()
-
+         console.log('退出第二步')
         // reset visited views and cached views
         // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
         // dispatch('tagsView/delAllViews', null, { root: true })
@@ -194,6 +195,17 @@ const actions = {
     return new Promise((resolve, reject) => {
       updateUser(getToken(), { token: getToken(), data: userMsg }).then(res => {
         resolve(res)
+      })
+    })
+  },
+
+  // 更新用户密码
+  updatePassword({commit},updateUserMsg){
+    return new Promise((resolve, reject) => {
+      updatePassword(updateUserMsg).then(res => {
+        resolve(res)
+      }).catch(error => {
+        // reject(error)
       })
     })
   }

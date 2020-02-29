@@ -1,4 +1,5 @@
-import { getChannelMsg ,addChannel ,updateChannel, getSellType, getEquipmentMsg, getEquipmentInventory, addEquipment, updateEquipment} from '@/api/data'
+import { getChannelMsg ,addChannel ,updateChannel, getSellType, getEquipmentMsg, getEquipmentInventory, addEquipment, updateEquipment, getCarTypeMsg,
+addCarType, addPurchaseMsg, scrapPurchaseMsg, receivePurchaseMsg, checkIccid} from '@/api/data'
 import { getToken } from '@/utils/auth'
 
 
@@ -6,11 +7,8 @@ import { getToken } from '@/utils/auth'
 const actions = {
   // 获取渠道信息数组
   getChannelMsg({commit}){
-    console.log('第一步')
     return new Promise((resolve, reject) => {
-      console.log('第二步')
       getChannelMsg(getToken()).then(res => {
-        console.log('第三步')
         resolve(res)
       }).catch(err0r => {
         reject(error)
@@ -81,7 +79,62 @@ const actions = {
         resolve(res)
       })
     })
+  },
+
+  // 获取车型数据
+  getCarTypeMsg({commit}){
+    return new Promise((resolve, reject) => {
+      getCarTypeMsg().then(res => {
+        resolve(res)
+      })
+    })
+  },
+
+  // 添加车型
+  addCarType({commit},carTypeMsg){
+    return new Promise((resolve, reject) => {
+      addCarType(carTypeMsg).then(res => {
+        resolve(res)
+      })
+    })
+  },
+
+  // 添加采购单据
+  addPurchaseMsg({commit},purchaseMsg){
+    return new Promise((resolve,reject) => {
+      addPurchaseMsg(purchaseMsg).then(res => {
+        resolve(res)
+      })
+    })
+  },
+
+  // 报废采购单据
+  scrapPurchaseMsg({commit},msg){
+    return new Promise((resolve, reject) => {
+      scrapPurchaseMsg(msg).then(res => {
+        resolve(res)
+      })
+    })
+  },
+
+  // 采购单据收货
+  receivePurchaseMsg({commit},msg){
+    return new Promise((resolve, reject) => {
+      receivePurchaseMsg(msg).then(res =>{
+        resolve(res)
+      })
+    })
+  },
+  
+  // 检查iccid是否存在没有被使用
+  checkIccid({commit},iccid){
+    return new Promise((resolve, reject) => {
+      checkIccid(iccid).then(res => {
+        resolve(res)
+      })
+    })
   }
+
 
 }
 

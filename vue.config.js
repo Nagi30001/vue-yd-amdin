@@ -6,7 +6,7 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
-const name = defaultSettings.title || 'vue Element Admin' // page title
+const name = defaultSettings.title || '优道科技' // page title
 
 // If your port is set to 80,
 // use administrator privileges to execute the command line.
@@ -31,8 +31,9 @@ module.exports = {
   lintOnSave: false,
   productionSourceMap: false,
   devServer: {
-    port: port,
-    open: true,
+    port: 8020, // 端口号
+    // host: 'localhost',
+    open: true, // 是否自动启动浏览器
     overlay: {
       warnings: false,
       errors: true
@@ -41,6 +42,7 @@ module.exports = {
     proxy: {
       [process.env.VUE_APP_BASE_API]: {
         target: `http://localhost:8090`, // 设置调用的接口域名和端口
+        // target: `http://49.234.210.89`, // 设置调用的接口域名和端口
         // ws: true,
         changeOrigin: true, // 是否跨域
         pathRewrite: {
@@ -50,6 +52,7 @@ module.exports = {
     }
     // after: require('./mock/mock-server.js')
   },
+
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
     // it can be accessed in index.html to inject the correct title.

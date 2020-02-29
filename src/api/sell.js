@@ -1,10 +1,17 @@
 import request from '@/utils/request'
 
-export function sellmsg(token) {
+export function sellmsg(data) {
   return request({
     url: '/sell/sellmsg',
-    method: 'get',
-    params : {token}
+    method: 'post',
+    data
+  })
+}
+export function loadSellMsg(data) {
+  return request({
+    url: '/sell/loadSellMsg',
+    method: 'post',
+    data
   })
 }
 
@@ -78,5 +85,13 @@ export function searchQueryDate(data) {
     method: 'post',
     data
 
+  })
+}
+
+export function pushInstallMsg(data) {
+  return request({
+    url: '/sell/pushInstallMsg',
+    method: 'post',
+    data
   })
 }

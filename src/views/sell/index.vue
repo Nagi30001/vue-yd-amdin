@@ -2,8 +2,7 @@
   <el-tabs type="border-card" style="margin: 10px;" class="wrap"
   infinite-scroll-disabled="busy"
   v-infinite-scroll="load"
-  infinite-scroll-immediate-check=false
-  infinite-scroll-throttle-delay=100000>
+  infinite-scroll-immediate-check=false>
     <el-tab-pane label="报单大厅">
   <div >
    <div >
@@ -398,6 +397,7 @@
 .el-table th {
 	display: table-cell!important;
 }
+/* 解决滚动加载报错问题 */
 .wrap {
   height: 100vh;
   overflow-y: auto;
@@ -519,7 +519,11 @@ let checkPhone = (rule,value,callback) => {
           // 用户Id
           userId: '',
           // 单据状态
-          status: ''
+          status: '',
+          // 页码
+          page: 1,
+          // 数量
+          count: 10
         },
         // 根据页面宽度变动浮窗宽度
         DialogWidth: '60%',
@@ -871,26 +875,20 @@ let checkPhone = (rule,value,callback) => {
         // 滚动加载
         load(){
           this.loading = true
+          if(this.searchType){
+            // 全部查询
+            
+          } else {
+            // 条件查询
+          }
            setTimeout(() => {
              this.allSearchMsg.page += 1
              this.loading = false
-             this.disabled()
            },2000)
 
           console.log(this.allSearchMsg.page)
+        },
 
-          // this.$store.dispatch('sell/loadSellMsg',this.allSearchMsg).then(res => {
-          //     console.log(res)
-          // })
-        },
-        // 是否禁用滚动加载
-        disabled(){
-          return this.loading || this.noMore
-        },
-        //
-        noMore () {
-          return this.allSearchMsg.page >= 20
-        },
 
     },
   // 初始化

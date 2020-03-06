@@ -1,9 +1,9 @@
 <!-- 设备库存 -->
 <template>
   <div>
-  <el-button type="primary" size="small" plain style="margin: 5px;" icon="el-icon-circle-plus"
+<!--  <el-button type="primary" size="small" plain style="margin: 5px;" icon="el-icon-circle-plus"
    @click="centerDialogVisible = true"
-    >新增库存</el-button>
+    >新增库存</el-button> -->
   <el-table
       size="mini"
       :data="informationMsg.filter(data => !search || data.equipmentMsg.equipmentBrand.toLowerCase().includes(search.toLowerCase()))"

@@ -129,9 +129,12 @@ export default {
         this.installCheck = res.installCheck
         this.loading = false
         this.inventoryMsgAll = res.inventoryMsg
+        // 处理设备信息。 品牌-型号-id
         if(res.inventoryMsg != null ){
           this.inventoryMsgAll.forEach(item => {
-            this.inventoryMsg.push({id:item.equipmentMsgId,value:item.equipmentMsg.equipmentBrand+'-'+item.equipmentMsg.equipmentTypeNum+'-'+item.equipmentMsg.size+'(余:'+item.awaitInstall+'台)'})
+            if(item.awaitInstall > 0){
+              this.inventoryMsg.push({id:item.equipmentMsgId,value:item.equipmentMsg.equipmentBrand+'-'+item.equipmentMsg.equipmentTypeNum+'-'+item.equipmentMsg.size+'(余:'+item.awaitInstall+'台)'})
+            }
           })
           this.iccids = res.iccids
         }

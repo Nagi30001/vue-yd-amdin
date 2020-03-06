@@ -398,10 +398,7 @@
             // add采购单据
             this.$store.dispatch('data/addPurchaseMsg',this.purchaseMsg).then(res => {
               this.purchaseMsgs.unshift(res.purchaseMsg)
-              this.$message({
-                type:'success',
-                message:'采购单据添加成功'
-              })
+              this.$router.go(0)
               this.clearDialog()
             })
           }

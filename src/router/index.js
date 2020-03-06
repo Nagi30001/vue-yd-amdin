@@ -417,12 +417,12 @@ export const asyncRoutes = [
         meta: {title: '用户管理', icon: 'user',roles: ['R1002','R1001']},
 
       },
-      {
-        path: 'authority',
-        component: () => import('@/views/yd-user/authority'),
-        name: '权限管理',
-        meta: {title: '权限管理', icon: 'clipboard',roles: ['R1002','R1001']},
-      },
+      // {
+      //   path: 'authority',
+      //   component: () => import('@/views/yd-user/authority'),
+      //   name: '权限管理',
+      //   meta: {title: '权限管理', icon: 'clipboard',roles: ['R1002','R1001']},
+      // },
       {
         path: 'personage-msg',
         component: () => import('@/views/yd-user/personage-msg'),
@@ -456,7 +456,7 @@ export const asyncRoutes = [
         path: 'sell-check',
         component: () => import('@/views/sell/sell-check'),
         name: '报单审核',
-        meta: {title: '报单审核', icon: 'skill',roles: ['R1001', 'R1002','R1003','R1004']},
+        meta: {title: '报单审核', icon: 'skill',roles: ['R1001', 'R1002','R1003','R1004','R1005']},
 
       }
     ]
@@ -466,37 +466,37 @@ export const asyncRoutes = [
     path: '/data',
     component: Layout,
     name: '数据管理',
-    meta: {title: '数据管理', icon: '数据管理',roles: ['R1001','R1003','R1004']},
+    meta: {title: '数据管理', icon: '数据管理',roles: ['R1001','R1003','R1004','R1005']},
     children: [
       {
         path: 'channel',
         component: () => import('@/views/data-management/channel'),
         name: '渠道管理',
-        meta: {title: '渠道管理', icon: '讨论区',roles: ['R1001','R1003']},
+        meta: {title: '渠道管理', icon: '讨论区',roles: ['R1001','R1003','R1005']},
       },
       {
         path: 'car-type',
         component: () => import('@/views/data-management/car-type'),
         name: '车型管理',
-        meta: {title: '车型管理', icon: '车型',roles: ['R1001']},
+        meta: {title: '车型管理', icon: '车型',roles: ['R1001','R1005']},
       },
       {
         path: 'sell-type',
         component: () => import('@/views/data-management/sell-type'),
         name: '销售类型',
-        meta: {title: '销售类型', icon: '类型',roles: ['R1001']},
+        meta: {title: '销售类型', icon: '类型',roles: ['R1001','R1005']},
       },
       {
         path: 'equipment-msg',
         component: () => import('@/views/data-management/equipment-msg'),
         name: '设备型号',
-        meta: {title: '设备型号', icon: '设备',roles: ['R1001']},
+        meta: {title: '设备型号', icon: '设备',roles: ['R1001','R1005']},
       },
       {
         path: 'inventory',
         component: () => import('@/views/data-management/inventory'),
         name: '设备库存',
-        meta: {title: '设备库存', icon: '库存',roles: ['R1001','R1004']},
+        meta: {title: '设备库存', icon: '库存',roles: ['R1001','R1004','R1005']},
       }
     ]
   }

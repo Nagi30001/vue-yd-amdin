@@ -1,7 +1,8 @@
 <template>
   <el-tabs type="border-card" style="margin: 10px;" class="wrap"
-  infinite-scroll-disabled="busy"
+  :infinite-scroll-disabled="busy"
   v-infinite-scroll="load"
+  infinite-scroll-distance="10"
   infinite-scroll-immediate-check=false>
     <el-tab-pane label="报单大厅">
   <div >
@@ -19,6 +20,7 @@
         页面刷新
       </el-button>
     </div>
+    <span style="font-size: 11px; font-style: oblique;">当前展示：{{getSize()}} 条</span>
     <!-- 表格信息 -->
     <el-table
       v-loading="loading"
@@ -187,6 +189,10 @@
         align="center"
         label="附加业务"
         prop="additionType">
+        <template slot-scope="scope">
+          <span>{{scope.row.additionType | ellipsis}}</span>
+        </template>
+
       </el-table-column>
       <el-table-column
         v-if="ifScreenWidth(screenWidth,1300)"
@@ -213,6 +219,10 @@
         prop="gatheringType">
       </el-table-column>
     </el-table>
+    <div style="text-align: center;" v-if="busy">
+      <span style="font-size: 11px; font-style: oblique;"  >已无更多数据！</span>
+    </div>
+
     <div >
       <!-- 新增单据 对话框, textMap[信息类型]  dialogFormVisible 对话框可见不可见  -->
       <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="400px">
@@ -288,9 +298,9 @@
             <el-select v-model="temp.additionType" multiple placeholder="请选择附加业务">
                 <el-option
                   v-for="item in additionType"
-                  :key="item.additionName"
+                  :key="item.id"
                   :label="item.additionName"
-                  :value="item.additionName">
+                  :value="item.id">
                 </el-option>
               </el-select>
           </el-form-item>
@@ -332,44 +342,44 @@
       >
       <!-- 标题文本查询 -->
       <label style="width: 80px;">销售人:</label>
-      <el-input  placeholder="销售人员姓名" v-model="queryDate.sellName" style="width: 200px; margin: 5px;" class="filter-item"   />
+      <el-input  placeholder="销售人员姓名" v-model="queryDate.sellName" style="width: 200px; margin: 5px;" class="filter-item" @change="queryDateChange()" />
       <label style="width: 80px;">平台名称:</label>
       <el-select v-model="queryDate.TPId" placeholder="默认全部平台" style="width: 200px;margin: 5px;">
-        <el-option v-for="item in thirdPartyMsgAll" :key="item.id" :label="item.userName" :value="item.id" ></el-option>
+        <el-option v-for="item in thirdPartyMsgAll" :key="item.id" :label="item.userName" :value="item.id"  @change="queryDateChange()"></el-option>
       </el-select>
       <label style="width: 80px;">单据状态:</label>
-      <el-select v-model="queryDate.status" placeholder="默认全部平台" style="width: 200px;margin: 5px;">
-        <el-option v-for="item in status" :key="item.value" :label="item.label" :value="item.value" ></el-option>
+      <el-select v-model="queryDate.status" placeholder="默认全部状态" style="width: 200px;margin: 5px;">
+        <el-option v-for="item in status" :key="item.value" :label="item.label" :value="item.value" @change="queryDateChange()" ></el-option>
       </el-select>
       <label style="width: 80px;">时间类型:</label>
-      <el-select v-model="queryDate.checkTimeType" placeholder="默认全部平台" style="width: 200px;margin: 5px;">
-        <el-option v-for="item in checkTimeType" :key="item" :label="item" :value="item" ></el-option>
+      <el-select v-model="queryDate.checkTimeType" placeholder="默认创建时间" style="width: 200px;margin: 5px;">
+        <el-option v-for="item in checkTimeType" :key="item" :label="item" :value="item" @change="queryDateChange()" ></el-option>
       </el-select>
       <label style="width: 80px;">开始日期:</label>
-      <el-date-picker class="filter-item" style="width: 200px;margin: 5px;" v-model="queryDate.startingDate" type="date" placeholder="开始日期"></el-date-picker>
+      <el-date-picker class="filter-item" style="width: 200px;margin: 5px;" v-model="queryDate.startingDate" type="date" placeholder="开始日期" value-format="yyyy-MM-dd" @change="queryDateChange()"></el-date-picker>
       <!-- 结束日期 -->
       <label style="width: 80px;">结束日期:</label>
-      <el-date-picker class="filter-item" style="width: 200px;margin: 5px;" v-model="queryDate.endDay" type="date" placeholder="结束日期"></el-date-picker>
+      <el-date-picker class="filter-item" style="width: 200px;margin: 5px;" v-model="queryDate.endDay" type="date" placeholder="结束日期" value-format="yyyy-MM-dd" @change="queryDateChange()"></el-date-picker>
       <label style="width: 80px;">销售类型:</label>
-      <el-select v-model="queryDate.sellType" placeholder="默认全部平台" style="width: 200px;margin: 5px;">
-        <el-option v-for="item in sellType" :key="item.sellType" :label="item.sellType" :value="item.sellType" ></el-option>
+      <el-select v-model="queryDate.sellType" placeholder="默认全部类型" style="width: 200px;margin: 5px;">
+        <el-option v-for="item in sellType" :key="item.id" :label="item.sellType" :value="item.id" @change="queryDateChange()" ></el-option>
       </el-select>
       <label style="width: 80px;">附加业务:</label>
-      <el-select v-model="queryDate.additionType" collapse-tags multiple placeholder="默认全部平台" style="width: 200px;margin: 5px;">
-        <el-option v-for="item in additionType" :key="item.additionName" :label="item.additionName" :value="item.additionName" ></el-option>
+      <el-select v-model="queryDate.additionType" collapse-tags multiple  style="width: 200px;margin: 5px;">
+        <el-option v-for="item in additionType" :key="item.id" :label="item.additionName" :value="item.id" @change="queryDateChange()"></el-option>
       </el-select>
       <label style="width: 80px;">渠道:</label>
-      <el-select v-model="queryDate.channel" placeholder="默认全部平台" style="width: 200px;margin: 5px;">
-        <el-option v-for="item in channel" :key="item.id" :label="item.channelName" :value="item.id" ></el-option>
+      <el-select v-model="queryDate.channel" placeholder="默认全部渠道" style="width: 200px;margin: 5px;">
+        <el-option v-for="item in channel" :key="item.id" :label="item.channelName" :value="item.id" @change="queryDateChange()" ></el-option>
       </el-select>
       <!-- 客户信息 -->
       <label style="width: 80px;">客户姓名:</label>
-      <el-input  placeholder="输入客户姓名查询" v-model="queryDate.clientName" style="width: 200px; margin: 5px;" class="filter-item"   />
+      <el-input  placeholder="输入客户姓名查询" v-model="queryDate.clientName" style="width: 200px; margin: 5px;" class="filter-item" @change="queryDateChange()"   />
       <label style="width: 80px;">客户车牌:</label>
-      <el-input  placeholder="输入客户车牌查询" v-model="queryDate.clientCarNum" style="width: 200px; margin: 5px;" class="filter-item"   />
+      <el-input  placeholder="输入客户车牌查询" v-model="queryDate.clientCarNum" style="width: 200px; margin: 5px;" class="filter-item"  @change="queryDateChange()"  />
       <span slot="footer" class="dialog-footer">
         <el-button @click="clearQueryDate()">取 消</el-button>
-        <el-button type="primary" @click="searchQueryDate() ">确 定</el-button>
+        <el-button type="primary" @click="searchQueryDatecheck() ">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -458,6 +468,8 @@ let checkPhone = (rule,value,callback) => {
         additionType: '',
         // 单据信息
         receipts:[],
+        // 请求得到的数据
+        loadingReceipts: [],
         // 该用户省份权限内的渠道列表
         channel:[],
         // 查询时间类型
@@ -466,12 +478,12 @@ let checkPhone = (rule,value,callback) => {
         status: [],
         // 全部查询true/条件查询false
         searchType:true,
-
+        // 是否禁用滚动加载
         busy: false,
         // 全部查询信息
         allSearchMsg:{
           userId : '',
-          page: 1,
+          page: 0,
           count:25
         },
 
@@ -520,10 +532,8 @@ let checkPhone = (rule,value,callback) => {
           userId: '',
           // 单据状态
           status: '',
-          // 页码
-          page: 1,
-          // 数量
-          count: 10
+          page:0,
+          count:25
         },
         // 根据页面宽度变动浮窗宽度
         DialogWidth: '60%',
@@ -571,35 +581,46 @@ let checkPhone = (rule,value,callback) => {
     methods: {
       // 初始化操作
       getDate(){
+        this.busy = false
         this.$store.dispatch('sell/sellmsg',this.allSearchMsg).then(res => {
-          this.user = res.user
-          this.citys = res.citys
-          this.carTyep = res.carTyep
-          this.thirdPartyMsgAll = res.thirdPartyMsg
-          this.sellType = res.sellType
-          this.additionType = res.additionType
-          this.receipts = res.receipts
-          this.channel = res.channel
-
-          // 将省份信息加工
-          this.provinceProcess(res)
-          // 将车辆型号信息加工
-          this.carTypeProcess(res)
+           console.log("this.allSearchMsg.page"+this.allSearchMsg.page)
+          if(this.allSearchMsg.page < 2){
+            this.user = res.user
+            this.citys = res.citys
+            this.carTyep = res.carTyep
+            this.thirdPartyMsgAll = res.thirdPartyMsg
+            this.sellType = res.sellType
+            this.additionType = res.additionType
+            this.channel = res.channel
+            // 将省份信息加工
+            this.provinceProcess(res)
+            // 将车辆型号信息加工
+            this.carTypeProcess(res)
+          }
+          this.loadingReceipts = res.receipts
+          this.loadingReceipts.forEach(item => {
+            this.receipts.push(item)
+          })
+          if(this.loadingReceipts.length < 25){
+            this.busy = true
+          }
           this.loading = false
-          console.log(this.$data)
-
           })
       },
       // 将省份信息加工
       provinceProcess(res){
-        for(var i=0; i<res.citys.length;i++){
+        let citys = res.citys
+        if(citys == null){
+          return;
+        }
+        for(var i=0; i<citys.length;i++){
           let op = {value:'',label:'',children:[]}
-          op.value = res.citys[i].province
-          op.label = res.citys[i].province
-          for(var j=0; j<res.citys[i].cities.length;j++){
+          op.value = citys[i].province
+          op.label = citys[i].province
+          for(var j=0; j<citys[i].cities.length;j++){
             let chi = {value:'',label:''}
-            chi.value = res.citys[i].cities[j].city
-            chi.label = res.citys[i].cities[j].city
+            chi.value = citys[i].cities[j].city
+            chi.label = citys[i].cities[j].city
             op.children.push(chi)
           }
           this.options.push(op)
@@ -607,6 +628,9 @@ let checkPhone = (rule,value,callback) => {
       },
       // 将车辆型号信息加工
       carTypeProcess(res){
+        if(res.carType == null){
+          return;
+        }
         for(var i=0; i<res.carType.length;i++){
           let op = {value:'',label:'',children:[]}
           op.value = res.carType[i].brand
@@ -820,10 +844,20 @@ let checkPhone = (rule,value,callback) => {
         },
         // 根据条件查询响应的单据
         searchQueryDate(){
+          this.searchType = false
           this.loading = true
           this.searchDialog = false
+          this.receipts = []
+          this.busy = false
           this.$store.dispatch('sell/searchQueryDate',this.queryDate).then(res => {
-            this.receipts = res.carReceipts
+            this.loadingReceipts = res.carReceipts
+            this.loadingReceipts.forEach(item => {
+              this.receipts.push(item)
+
+            })
+            if(this.loadingReceipts.length < 25){
+              this.busy = true
+            }
             this.loading = false
             console.log(res)
             this.$message({
@@ -831,8 +865,6 @@ let checkPhone = (rule,value,callback) => {
               message: '查询成功'
             })
           })
-
-
         },
         // 取消条件查询
         clearQueryDate(){
@@ -847,6 +879,19 @@ let checkPhone = (rule,value,callback) => {
           this.queryDate.TPId = ''
           this.queryDate.clientName = ''
           this.queryDate.clientCarNum = ''
+          this.queryDate.checkTimeType = '创建时间'
+          // 销售类型
+          this.queryDate.sellType = ''
+          // 附加业务
+          this.queryDate.additionType = ''
+          // 渠道
+          this.queryDate.channel = ''
+          // 用户Id
+          this.queryDate.userId =  ''
+          // 单据状态
+          this.queryDate.status = ''
+          this.queryDate.page = 0
+          this.queryDate.count = 25
         },
         // 归属地发生改变后，清空平台
         clearTP(){
@@ -875,20 +920,39 @@ let checkPhone = (rule,value,callback) => {
         // 滚动加载
         load(){
           this.loading = true
-          if(this.searchType){
-            // 全部查询
-            
-          } else {
-            // 条件查询
-          }
-           setTimeout(() => {
+           if(this.searchType) {
+             //  全部查询
              this.allSearchMsg.page += 1
              this.loading = false
-           },2000)
-
-          console.log(this.allSearchMsg.page)
+             this.getDate()
+             console.log('执行加载！')
+           } else {
+             // 条件查询
+             this.queryDate.page += 1
+             this.loading = false
+             this.searchQueryDate()
+             console.log('执行条件加载！')
+           }
         },
-
+        // 是否禁用滚动加载
+        disabled(){
+          return this.loading || this.noMore
+        },
+        //
+        noMore () {
+          return this.allSearchMsg.page >= 20
+        },
+        queryDateChange(){
+          this.queryDate.page = 0
+          console.log("条件变化！")
+        },
+        getSize(){
+          return this.receipts.length
+        },
+        searchQueryDatecheck(){
+          this.queryDate.page = 0
+          this.searchQueryDate()
+        }
 
     },
   // 初始化
@@ -903,6 +967,16 @@ let checkPhone = (rule,value,callback) => {
     this.queryDate.userId = this.$store.state.user.userMsg.id
     this.allSearchMsg.userId = this.$store.state.user.userMsg.id
     this.resteCheckStatusType()
-  }
+  },
+  filters:{
+    ellipsis(value){
+      let len=value.length;
+      		if (!value) return ''
+      		if (value.length > 4) {
+      			return value.substring(0,4) + '..'
+      		}
+      		return value
+      }
+   },
 }
 </script>

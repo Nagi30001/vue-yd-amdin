@@ -7,7 +7,7 @@
     <el-tab-pane label="设备采购" v-if="checkTab('all')">
       <purchaseTab :purchaseMsgs="equipmentMsg.purchaseMsg" :userMsg="equipmentMsg.user" :platform="equipmentMsg.platform" :brand="equipmentMsg.equipmentBrand" :type="equipmentMsg.equipmentType" :province="equipmentMsg.provinces" :citis="equipmentMsg.citis"></purchaseTab>
     </el-tab-pane>
-    <el-tab-pane label="设备转移" v-if="checkTab('all')">
+<!--    <el-tab-pane label="设备转移" v-if="checkTab('all')">
       <transferTab :transferMsg="equipmentMsg.transferMsg" ></transferTab>
     </el-tab-pane>
     <el-tab-pane label="设备维修" v-if="checkTab('YD')">
@@ -15,7 +15,7 @@
     </el-tab-pane>
     <el-tab-pane label="设备报废" v-if="checkTab('YD')">
       <scrapTab :scrapMsg="equipmentMsg.scrapMsg" ></scrapTab>
-    </el-tab-pane>
+    </el-tab-pane> -->
 <!--    <el-tab-pane label="更换记录" v-if="checkTab('all')">
       <scrapTab :scrapMsg="equipmentMsg.scrapMsg" ></scrapTab>
     </el-tab-pane> -->

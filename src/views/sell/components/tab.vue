@@ -180,10 +180,10 @@
         <span>收款图片:</span>
         <el-upload
           ref="upload"
-          action="http://49.234.210.89/prod-api/sell/uploadFile"
+          action="http://49.234.210.89/dev-api/sell/uploadFile"
           :headers="headers()"
           list-type="picture-card"
-          limit=1
+          :limit ="1"
           accept=".jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF,.zip"
           style="width: 100%;"
           :on-preview="handlePreview"
@@ -349,7 +349,7 @@ let checkCarNum = (rule,value,callback) => {
          // 发送上传图片请求
          this.$refs.upload.submit();
          // 检查图片是否上传成功了,然后提交收款确认请求，否则不提交
-          
+
        }
 
 

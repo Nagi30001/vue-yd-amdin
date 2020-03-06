@@ -21,6 +21,7 @@
       <!-- 右上角头像部分 -->
      <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
+          <span style="font-size: 15px;">用户:{{getUserMsg()}}</span>
           <!-- <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar"> -->
           <i class="el-icon-caret-bottom" />
         </div>
@@ -85,8 +86,12 @@ export default {
     async logout() {
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    },
+    getUserMsg(){
+      return this.$store.state.user.userMsg.userName
     }
-  }
+  },
+
 }
 </script>
 

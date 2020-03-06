@@ -41,7 +41,7 @@ module.exports = {
     // before: require('./mock/mock-server.js'),
     proxy: {
       [process.env.VUE_APP_BASE_API]: {
-        target: `http://localhost:8090`, // 设置调用的接口域名和端口
+        target: 'http://localhost:8090', // 设置调用的接口域名和端口
         // target: `http://49.234.210.89`, // 设置调用的接口域名和端口
         // ws: true,
         changeOrigin: true, // 是否跨域
